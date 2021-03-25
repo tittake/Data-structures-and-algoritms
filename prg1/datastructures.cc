@@ -19,7 +19,7 @@ Type random_in_range(Type start, Type end)
 }
 
 bool comp(std::pair<Coord, PlaceID> a, std::pair<Coord, PlaceID> b){
-    
+
     if(sqrt((pow(a.first.x,2)) + (pow(a.first.y,2))) < sqrt((pow(b.first.x,2)) + (pow(b.first.y,2)))){
         return true;
     }else if(sqrt((pow(a.first.x,2)) + (pow(a.first.y,2))) == sqrt((pow(b.first.x,2)) + (pow(b.first.y,2))))
@@ -29,6 +29,8 @@ bool comp(std::pair<Coord, PlaceID> a, std::pair<Coord, PlaceID> b){
         return false;
     }
 }
+
+
 // Modify the code below to implement the functionality of the class.
 // Also remove comments from the parameter names when you implement
 // an operation (Commenting out parameter name prevents compiler from
@@ -44,6 +46,7 @@ Datastructures::~Datastructures()
 {
     // Replace this comment with your implementation
 }
+
 
 int Datastructures::place_count()
 {
@@ -237,10 +240,10 @@ std::vector<AreaID> Datastructures::subarea_in_areas(AreaID id)
 {
     std::vector<AreaID> parents;
 
-    if(areas_.find(id) != areas_.end()){
+    if(areas_.find(id) != areas_.end()){ //θ(1)
         std::shared_ptr<AreaID> parent = areas_[id].parent_;
-        while(parent != nullptr){
-            parents.push_back(*parent);
+        while(parent != nullptr){ // O(n)
+            parents.push_back(*parent); //O(1)
             parent = areas_[*parent].parent_;
 
         }

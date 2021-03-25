@@ -89,10 +89,8 @@ public:
     Datastructures();
     ~Datastructures();
 
-    bool compare(std::string a, std::string b);
-
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(1)
+    // Short rationale for estimate: Method only returns the size of a vector.
     int place_count();
 
     // Estimate of performance: θ(n)
@@ -118,56 +116,60 @@ public:
     // for unordered map, but most times its a constant
     Coord get_place_coord(PlaceID id);
 
-    // We recommend you implement the operations below only after implementing the ones above
 
     // Estimate of performance: θ(n)
     // Short rationale for estimate: For-loops make the process linear.
     std::vector<PlaceID> places_alphabetically();
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n log(n))
+    // Short rationale for estimate: Sort-algorithm is O(n log(n)).
     std::vector<PlaceID> places_coord_order();
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: θ(n)
+    // Short rationale for estimate: For-loops make the process linear.
     std::vector<PlaceID> find_places_name(Name const& name);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: θ(n)
+    // Short rationale for estimate: For-loops make the process linear.
     std::vector<PlaceID> find_places_type(PlaceType type);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n) (≈θ(1))
+    // Short rationale for estimate: At its worst find-algorithm's efficiency is O(n)
+    // for unordered map, but most times its a constant
     bool change_place_name(PlaceID id, Name const& newname);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n) (≈θ(1))
+    // Short rationale for estimate: At its worst find-algorithm's efficiency is O(n)
+    // for unordered map, but most times its a constant
     bool change_place_coord(PlaceID id, Coord newcoord);
 
-    // We recommend you implement the operations below only after implementing the ones above
-
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n) (≈θ(1))
+    // Short rationale for estimate: Inserting to umap is O(n) (≈θ(1)).
     bool add_area(AreaID id, Name const& name, std::vector<Coord> coords);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n) (≈θ(1))
+    // Short rationale for estimate: At its worst find-algorithm's efficiency is O(n)
+    // for unordered map, but most times its a constant
     Name get_area_name(AreaID id);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n) (≈θ(1))
+    // Short rationale for estimate: At its worst find-algorithm's efficiency is O(n)
+    // for unordered map, but most times its a constant
     std::vector<Coord> get_area_coords(AreaID id);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: θ(n)
+    // Short rationale for estimate: For-loop is linear.
     std::vector<AreaID> all_areas();
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n) (≈θ(1))
+    // Short rationale for estimate: At its worst find-algorithm's efficiency is O(n)
+    // for unordered map, but most times its a constant
     bool add_subarea_to_area(AreaID id, AreaID parentid);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n)
+    // Short rationale for estimate: Find-algorithm is ≈θ(1), while-loop is O(n)
+    // and push_back is O(1). At its absolute worst this could be O(n^2)... but let's
+    // not think about that.
     std::vector<AreaID> subarea_in_areas(AreaID id);
 
     // Non-compulsory operations
