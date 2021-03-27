@@ -186,8 +186,8 @@ public:
     // Short rationale for estimate:
     std::vector<PlaceID> places_closest_to(Coord xy, PlaceType type);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n)
+    // Short rationale for estimate: Remove is a linear method and find for umap is ≈θ(1).
     bool remove_place(PlaceID id);
 
     // Estimate of performance:
