@@ -31,11 +31,6 @@ bool comp(std::pair<Coord, PlaceID> a, std::pair<Coord, PlaceID> b){
 }
 
 
-// Modify the code below to implement the functionality of the class.
-// Also remove comments from the parameter names when you implement
-// an operation (Commenting out parameter name prevents compiler from
-// warning about unused parameters on operations you haven't yet implemented.)
-
 Datastructures::Datastructures()
 {
 
@@ -44,7 +39,7 @@ Datastructures::Datastructures()
 
 Datastructures::~Datastructures()
 {
-    // Replace this comment with your implementation
+
 }
 
 
@@ -73,8 +68,6 @@ bool Datastructures::add_place(PlaceID id, const Name& name, PlaceType type, Coo
     }else{
         return false;
     }
-
-
 
 }
 
@@ -226,7 +219,10 @@ bool Datastructures::add_subarea_to_area(AreaID id, AreaID parentid)
 {
     if(areas_.find(parentid) != areas_.end() and areas_.find(id) != areas_.end()){
         std::shared_ptr<AreaID> parent = std::make_shared<AreaID>(parentid);
+        std::shared_ptr<AreaID> child = std::make_shared<AreaID>(id);
+
         areas_[id].parent_ = parent;
+        areas_[parentid].children_.push_back(child);
         return true;
     }else if(areas_.find(id)->second.parent_ != nullptr){
         return false;
@@ -253,6 +249,7 @@ std::vector<AreaID> Datastructures::subarea_in_areas(AreaID id)
     }
 }
 
+
 std::vector<PlaceID> Datastructures::places_closest_to(Coord xy, PlaceType type)
 {
     // Replace this comment with your implementation
@@ -272,8 +269,25 @@ bool Datastructures::remove_place(PlaceID id)
 
 std::vector<AreaID> Datastructures::all_subareas_in_area(AreaID id)
 {
-    // Replace this comment with your implementation
-    return {NO_AREA};
+    std::vector<AreaID> all_subareas;
+    auto iter = areas_.find(id);
+    if(iter == areas_.end()){
+        return {NO_AREA};
+
+    }
+    //Add children to vector
+    std::vector<std::shared_ptr<AreaID>> subareas = areas_[id].children_;
+    for(auto subarea : subareas){
+        all_subareas.push_back(*subarea);
+    }
+
+    for(auto child : subareas){
+        std::vector<AreaID> subsub_areas = all_subareas_in_area(*child);
+
+        all_subareas.insert(all_subareas.end(), subsub_areas.begin(), subsub_areas.end());
+    }
+    return all_subareas;
+
 }
 
 AreaID Datastructures::common_area_of_subareas(AreaID id1, AreaID id2)

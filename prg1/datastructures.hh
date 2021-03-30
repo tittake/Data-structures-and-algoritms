@@ -178,8 +178,9 @@ public:
     // Short rationale for estimate:
     void creation_finished();
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n^2)
+    // Short rationale for estimate: Insert inside a for-loop (two linear methods).
+    // Most times, this is not even near to n^2, though.
     std::vector<AreaID> all_subareas_in_area(AreaID id);
 
     // Estimate of performance:
@@ -196,6 +197,12 @@ public:
 
 private:
 
+
+    // Estimate of performance:
+    // Short rationale for estimate:
+    std::vector<PlaceID> sort_by_distance(std::pair<Coord, PlaceID> origin, std::pair<Coord, PlaceID> place);
+
+
     struct PlaceInfo{
         Name name_;
         Coord  coords_;
@@ -210,6 +217,7 @@ private:
         Name name_;
         std::vector<Coord> coords_;
         std::shared_ptr<AreaID> parent_ = nullptr;
+        std::vector<std::shared_ptr<AreaID>> children_ = {};
 
     };
 
