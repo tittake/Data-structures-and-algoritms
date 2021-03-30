@@ -191,8 +191,8 @@ public:
     // Short rationale for estimate: Remove is a linear method and find for umap is ≈θ(1).
     bool remove_place(PlaceID id);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n^2)
+    // Short rationale for estimate: At worst, the method for-loops through both parent vectors.
     AreaID common_area_of_subareas(AreaID id1, AreaID id2);
 
 private:

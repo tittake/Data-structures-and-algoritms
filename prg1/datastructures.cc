@@ -292,6 +292,17 @@ std::vector<AreaID> Datastructures::all_subareas_in_area(AreaID id)
 
 AreaID Datastructures::common_area_of_subareas(AreaID id1, AreaID id2)
 {
-    // Replace this comment with your implementation
+    //parents of areas in ascending order
+    std::vector<AreaID> parents1 = subarea_in_areas(id1);
+    std::vector<AreaID> parents2 = subarea_in_areas(id2);
+    for(auto parent1 : parents1){
+       for( auto parent2 : parents2){
+           if(parent1 == parent2){
+               return parent1;
+           }
+
+       }
+   }
     return NO_AREA;
+
 }
