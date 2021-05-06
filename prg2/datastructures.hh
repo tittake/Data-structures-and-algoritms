@@ -247,6 +247,8 @@ public:
     Distance trim_ways();
 
 private:
+
+    //PRG1
     struct PlaceInfo{
         Name name_;
         Coord  coords_;
@@ -266,6 +268,20 @@ private:
     };
 
     std::unordered_map<AreaID, AreaInfo> areas_;
+
+    //PRG2
+
+    Distance count_way_length(std::vector<Coord> coords);
+
+    struct Way{
+        std::vector<Coord> coords_;
+        Distance length_;
+
+    };
+
+    std::unordered_map<WayID, Way> ways_;
+    
+
 
 };
 

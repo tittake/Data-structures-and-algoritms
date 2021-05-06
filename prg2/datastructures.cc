@@ -299,16 +299,38 @@ AreaID Datastructures::common_area_of_subareas(AreaID id1, AreaID id2)
     return NO_AREA;
 }
 
+//PRG2
+
+Distance Datastructures::count_way_length(std::vector<Coord> coords)
+{
+    unsigned long long int i = 0;
+    Distance length = 0;
+    while(i+1 < coords.size()){
+        length += floor(sqrt(((coords[i].x-coords[i+1].x)^2)+((coords[i].y-coords[i+1].y)^2)));
+        ++i;
+    }
+    return length;
+}
+
 std::vector<WayID> Datastructures::all_ways()
 {
-    // Replace this comment with your implementation
-    return {};
+    std::vector<WayID> all_ways;
+    for(auto way : ways_){
+        all_ways.push_back(way.first);
+    }
+    return all_ways;
 }
 
 bool Datastructures::add_way(WayID id, std::vector<Coord> coords)
 {   
-    // Replace this comment with your implementation
-    return false;
+    if(ways_.find(id) == ways_.end()){
+        
+        Distance length = count_way_length(coords);
+        ways_.insert({id, {coords, length}});
+        return true;
+    }else{
+        return false;
+    }
 }
 
 std::vector<std::pair<WayID, Coord>> Datastructures::ways_from(Coord xy)
@@ -319,13 +341,18 @@ std::vector<std::pair<WayID, Coord>> Datastructures::ways_from(Coord xy)
 
 std::vector<Coord> Datastructures::get_way_coords(WayID id)
 {
-    // Replace this comment with your implementation
-    return {NO_COORD};
+    if(ways_.find(id) != ways_.end()){
+
+        return ways_[id].coords_;
+    }else{
+        return {NO_COORD};
+    }
+
 }
 
 void Datastructures::clear_ways()
 {
-    // Replace this comment with your implementation
+    ways_.clear();
 }
 
 std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_any(Coord fromxy, Coord toxy)
@@ -363,3 +390,5 @@ Distance Datastructures::trim_ways()
     // Replace this comment with your implementation
     return NO_DISTANCE;
 }
+
+
