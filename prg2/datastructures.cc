@@ -335,8 +335,32 @@ bool Datastructures::add_way(WayID id, std::vector<Coord> coords)
 
 std::vector<std::pair<WayID, Coord>> Datastructures::ways_from(Coord xy)
 {
-    // Replace this comment with your implementation
-    return {{NO_WAY, NO_COORD}};
+    std::vector<std::pair<WayID, Coord>> ways_from;
+    std::pair<WayID, Coord> destination;
+
+    for(auto way : ways_){
+
+        // If the beginning of way is xy...
+        if(way.second.coords_.front() == xy){
+
+            //...then its end point is the crossroad we're looking for
+            destination.first = way.first;
+            destination.second = way.second.coords_.back();
+            ways_from.push_back(destination);
+
+        }
+        // If the end of way is xy...
+        if(way.second.coords_.back() == xy){
+
+            //...then its beginning is the crossroad we're looking for
+            destination.first = way.first;
+            destination.second = way.second.coords_.front();
+            ways_from.push_back(destination);
+        }
+        }
+
+    return ways_from;
+
 }
 
 std::vector<Coord> Datastructures::get_way_coords(WayID id)
