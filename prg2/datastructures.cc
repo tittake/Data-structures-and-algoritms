@@ -303,10 +303,13 @@ AreaID Datastructures::common_area_of_subareas(AreaID id1, AreaID id2)
 
 Distance Datastructures::count_way_length(std::vector<Coord> coords)
 {
-    unsigned long long int i = 0;
-    Distance length = 0;
-    while(i+1 < coords.size()){
-        length += floor(sqrt(((coords[i].x-coords[i+1].x)^2)+((coords[i].y-coords[i+1].y)^2)));
+    int i = 0;
+    int size = coords.size();
+    Distance length = 0;   
+    while(i+1 < size){
+        auto dx = pow((coords[i].x-coords[i+1].x),2);
+        auto dy = pow((coords[i].y-coords[i+1].y),2);
+        length += floor(sqrt((dx)+(dy)));
         ++i;
     }
     return length;
@@ -326,11 +329,20 @@ bool Datastructures::add_way(WayID id, std::vector<Coord> coords)
     if(ways_.find(id) == ways_.end()){
         
         Distance length = count_way_length(coords);
-        ways_.insert({id, {coords, length}});
+        ways_.insert({id, {coords, coords.front(), coords.back(), length}});
+        std::shared_ptr<Way> way_ptr = std::make_shared<Way>(ways_[id]);
+        std::shared_ptr<Coord> start = std::make_shared<Coord>(coords.front());
+        std::shared_ptr<Coord> end = std::make_shared<Coord>(coords.back());
+        crossroads_[*start].ways_connected_.push_back(way_ptr);
+        crossroads_[*end].ways_connected_.push_back(way_ptr);
+        crossroads_[*start].coord_ = *start;
+        crossroads_[*end].coord_ = *end;
         return true;
     }else{
         return false;
     }
+
+
 }
 
 std::vector<std::pair<WayID, Coord>> Datastructures::ways_from(Coord xy)
@@ -341,20 +353,20 @@ std::vector<std::pair<WayID, Coord>> Datastructures::ways_from(Coord xy)
     for(auto way : ways_){
 
         // If the beginning of way is xy...
-        if(way.second.coords_.front() == xy){
+        if(way.second.start_ == xy){
 
             //...then its end point is the crossroad we're looking for
             destination.first = way.first;
-            destination.second = way.second.coords_.back();
+            destination.second = way.second.end_;
             ways_from.push_back(destination);
 
         }
         // If the end of way is xy...
-        if(way.second.coords_.back() == xy){
+        if(way.second.end_ == xy){
 
             //...then its beginning is the crossroad we're looking for
             destination.first = way.first;
-            destination.second = way.second.coords_.front();
+            destination.second = way.second.start_;
             ways_from.push_back(destination);
         }
         }
@@ -377,12 +389,88 @@ std::vector<Coord> Datastructures::get_way_coords(WayID id)
 void Datastructures::clear_ways()
 {
     ways_.clear();
+    crossroads_.clear();
 }
 
 std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_any(Coord fromxy, Coord toxy)
 {
-    // Replace this comment with your implementation
-    return {{NO_COORD, NO_WAY, NO_DISTANCE}};
+    std::vector<std::tuple<Coord, WayID, Distance>> path;
+
+    std::vector<std::pair<WayID, Coord>> ways_from_fromxy = ways_from(fromxy);
+    std::vector<std::pair<WayID, Coord>> ways_from_toxy = ways_from(toxy);
+
+    // Check whether both crossroads exist
+    if(ways_from_fromxy.empty() or ways_from_toxy.empty()){
+        return {{NO_COORD, NO_WAY, NO_DISTANCE}};
+    }
+
+    //Let's try and work out a DFS
+    std::stack<Coord> priority_stack;
+    Coord u;
+
+    // Every node set as white
+    for(auto& crossroad : crossroads_){
+        crossroad.second.color_ = 0;
+        crossroad.second.prior_ = nullptr;
+        crossroad.second.distance_ = 0;
+    }
+
+    //Push all the ways we know to priority_stack
+
+    priority_stack.push(fromxy);
+
+     while(!priority_stack.empty()){
+
+         u = priority_stack.top();
+
+         priority_stack.pop();
+
+         if(crossroads_[u].color_ == 0){
+             crossroads_[u].color_ = 1;
+             priority_stack.push(u);
+             for(auto adj : crossroads_[u].ways_connected_){
+                 
+                 Coord v;
+
+                 if(adj->start_ == u){
+                     v = adj->end_;
+                 }else{
+                     v = adj->start_;
+                 }
+
+                 if(crossroads_[v].color_ == 0){
+                     crossroads_[v].distance_ = crossroads_[u].distance_ + adj->length_;
+                     priority_stack.push(v);
+                     std::shared_ptr<Crossroad> prior_ptr = std::make_shared<Crossroad>(crossroads_[u]);
+                     crossroads_[v].prior_ = prior_ptr;
+             }
+
+                 if(v == toxy){
+                     break;
+                 }
+         }
+
+         }else{
+             crossroads_[u].color_ = 2;
+         }
+     }
+     //Now we have found toxy and have references to a route from toxy to fromxy
+     //Let's add the last crossroad to our vector
+     std::tuple<Coord, WayID, Distance> cross;
+     cross = std::make_tuple(toxy, 0, crossroads_[toxy].distance_);
+     path.push_back(cross);
+
+     auto prior = crossroads_[toxy].prior_;
+     while(prior != nullptr){
+         std::tuple<Coord, WayID, Distance> cross;
+         cross = std::make_tuple(prior->coord_, 0, prior->distance_);
+         path.push_back(cross);
+         prior = prior->prior_;
+           
+     }
+     reverse(path.begin(), path.end());
+     return path;
+
 }
 
 bool Datastructures::remove_way(WayID id)

@@ -14,6 +14,7 @@
 #include <math.h>
 #include <algorithm>
 #include <memory>
+#include <stack>
 
 // Types for IDs
 using PlaceID = long long int;
@@ -74,7 +75,7 @@ inline bool operator<(Coord c1, Coord c2)
 Coord const NO_COORD = {NO_VALUE, NO_VALUE};
 
 // Type for a distance (in metres)
-using Distance = int;
+using Distance = long long int;
 
 // Return value for cases where Duration is unknown
 Distance const NO_DISTANCE = NO_VALUE;
@@ -275,12 +276,24 @@ private:
 
     struct Way{
         std::vector<Coord> coords_;
+        Coord start_;
+        Coord end_;
         Distance length_;
 
     };
 
     std::unordered_map<WayID, Way> ways_;
+
+    struct Crossroad{
+        Coord coord_;
+        int color_;
+        std::vector<std::shared_ptr<Way>> ways_connected_;
+        std::shared_ptr<Crossroad> prior_;
+        Distance distance_;
+
+    };
     
+    std::unordered_map<Coord, Crossroad, CoordHash> crossroads_;
 
 
 };
