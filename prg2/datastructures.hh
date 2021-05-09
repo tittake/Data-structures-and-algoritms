@@ -201,28 +201,29 @@ public:
 
     // Phase 2 operations
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: θ(n)
+    // Short rationale for estimate: For-loop through all the values.
     std::vector<WayID> all_ways();
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n)
+    // Short rationale for estimate: Any of the methods used aren't linear but perftest leads me to believe it's
+    // linear either way.
     bool add_way(WayID id, std::vector<Coord> coords);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n)
+    // Short rationale for estimate: For-loop through all the values in ways_.
     std::vector<std::pair<WayID, Coord>> ways_from(Coord xy);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n)
+    // Short rationale for estimate: Find for umap is O(n)
     std::vector<Coord> get_way_coords(WayID id);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: θ(n+m), n is elements in Ways_ and m is elements in Crossroads_
+    // Short rationale for estimate: clear for umap is θ(n)
     void clear_ways();
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n)
+    // Short rationale for estimate: DFS is O(n)
     std::vector<std::tuple<Coord, WayID, Distance>> route_any(Coord fromxy, Coord toxy);
 
     // Non-compulsory operations
@@ -273,7 +274,6 @@ private:
     //PRG2
 
     Distance count_way_length(std::vector<Coord> coords);
-
     struct Way{
         std::vector<Coord> coords_;
         Coord start_;
@@ -292,8 +292,9 @@ private:
         Distance distance_;
 
     };
-    
+
     std::unordered_map<Coord, Crossroad, CoordHash> crossroads_;
+
 
 
 };
