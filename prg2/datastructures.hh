@@ -16,6 +16,7 @@
 #include <memory>
 #include <stack>
 #include <list>
+#include <queue>
 
 // Types for IDs
 using PlaceID = long long int;
@@ -233,7 +234,7 @@ public:
     // Short rationale for estimate:
     bool remove_way(WayID id);
 
-    // Estimate of performance: O(n)
+    // Estimate of performance: O(n+m) n is elements in Ways_ and m is elements in Crossroads_
     // Short rationale for estimate: BFS is O(n)
     std::vector<std::tuple<Coord, WayID, Distance>> route_least_crossroads(Coord fromxy, Coord toxy);
 
@@ -241,8 +242,8 @@ public:
     // Short rationale for estimate:
     std::vector<std::tuple<Coord, WayID>> route_with_cycle(Coord fromxy);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n+m) n is elements in Ways_ and m is elements in Crossroads_
+    // Short rationale for estimate: Dijksrta's algorithm is O(n)
     std::vector<std::tuple<Coord, WayID, Distance>> route_shortest_distance(Coord fromxy, Coord toxy);
 
     // Estimate of performance:

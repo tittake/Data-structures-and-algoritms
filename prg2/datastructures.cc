@@ -497,10 +497,11 @@ std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_least_cro
         crossroad.second.color_ = 0;
         crossroad.second.prior_crossroad_ = nullptr;
         crossroad.second.distance_ = INFINITY;
+        crossroad.second.came_from_ = nullptr;
     }
 
     //Let's try and work out a BFS
-    auto& node = crossroads_[u];
+    Crossroad& node = crossroads_[u];
     node.color_ = 1;
     node.distance_ = 0;
     priority_queue.push_back(u);
@@ -561,7 +562,85 @@ std::vector<std::tuple<Coord, WayID> > Datastructures::route_with_cycle(Coord fr
 std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_shortest_distance(Coord fromxy, Coord toxy)
 {
     std::vector<std::tuple<Coord, WayID, Distance>> path;
-    return {{NO_COORD, NO_WAY, NO_DISTANCE}};
+    std::vector<std::pair<WayID, Coord>> ways_from_fromxy = ways_from(fromxy);
+    std::vector<std::pair<WayID, Coord>> ways_from_toxy = ways_from(toxy);
+
+    // Check whether both crossroads exist
+    if(ways_from_fromxy.empty() or ways_from_toxy.empty()){
+        return {{NO_COORD, NO_WAY, NO_DISTANCE}};
+    }
+
+    // Every node set as white
+    for(auto& crossroad : crossroads_){
+        crossroad.second.color_ = 0;
+        crossroad.second.prior_crossroad_ = nullptr;
+        crossroad.second.distance_ = INFINITY;
+        crossroad.second.came_from_ = nullptr;
+    }
+
+    //Dijkstra-time!
+    std::priority_queue<std::pair<Distance, Coord>> priority_queue;
+    Coord u = fromxy;
+    Crossroad& node = crossroads_[u];
+    node.color_ = 1;
+    node.distance_ = 0;
+    std::pair<Distance, Coord> pair = std::make_pair(node.distance_,node.coord_);
+    priority_queue.push(pair);
+    while(!priority_queue.empty()){       
+        u = priority_queue.top().second;
+        node = crossroads_[u];
+        priority_queue.pop();
+        for(std::shared_ptr<Way> adj : node.ways_connected_){
+            Coord v;
+
+            if(adj->start_ == u){
+                v = adj->end_;
+            }else{
+                v = adj->start_;
+            }
+            Crossroad& next_node = crossroads_[v];
+            Distance weight = adj->length_;
+
+            if(next_node.color_ == 0){
+                next_node.color_ = 1;
+                std::pair<Distance, Coord> pair = std::make_pair(next_node.distance_,next_node.coord_);
+                priority_queue.push(pair);
+            }
+
+            if(next_node.distance_ > node.distance_+weight){
+                next_node.distance_ = node.distance_+ weight;
+                next_node.prior_crossroad_ = std::make_shared<Crossroad>(node);
+                next_node.came_from_ = std::make_shared<WayID>(adj->id_);
+                priority_queue.push(std::make_pair(-next_node.distance_, next_node.coord_));
+            }
+
+            if(v == toxy){
+                break;
+            }
+        }
+
+    node.color_ = 2;
+
+
+    }
+
+    std::tuple<Coord, WayID, Distance> cross;
+
+    cross = std::make_tuple(toxy, NO_WAY, crossroads_[toxy].distance_);
+    path.push_back(cross);
+
+    auto first = crossroads_[toxy];
+    while(first.prior_crossroad_ != nullptr){
+        Crossroad prior = *first.prior_crossroad_;
+        WayID route = *first.came_from_;
+        cross = std::make_tuple(prior.coord_, route, prior.distance_);
+        path.push_back(cross);
+        first = prior;
+    }
+    reverse(path.begin(), path.end());
+
+
+    return path;
 }
 
 Distance Datastructures::trim_ways()
