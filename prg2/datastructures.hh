@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <memory>
 #include <stack>
+#include <list>
 
 // Types for IDs
 using PlaceID = long long int;
@@ -222,7 +223,7 @@ public:
     // Short rationale for estimate: clear for umap is θ(n)
     void clear_ways();
 
-    // Estimate of performance: O(n)
+    // Estimate of performance: O(n+m) n is elements in Ways_ and m is elements in Crossroads_
     // Short rationale for estimate: DFS is O(n)
     std::vector<std::tuple<Coord, WayID, Distance>> route_any(Coord fromxy, Coord toxy);
 
@@ -232,8 +233,8 @@ public:
     // Short rationale for estimate:
     bool remove_way(WayID id);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n)
+    // Short rationale for estimate: BFS is O(n)
     std::vector<std::tuple<Coord, WayID, Distance>> route_least_crossroads(Coord fromxy, Coord toxy);
 
     // Estimate of performance:
@@ -275,6 +276,7 @@ private:
 
     Distance count_way_length(std::vector<Coord> coords);
     struct Way{
+        WayID id_;
         std::vector<Coord> coords_;
         Coord start_;
         Coord end_;
@@ -288,8 +290,9 @@ private:
         Coord coord_;
         int color_;
         std::vector<std::shared_ptr<Way>> ways_connected_;
-        std::shared_ptr<Crossroad> prior_;
+        std::shared_ptr<Crossroad> prior_crossroad_;
         Distance distance_;
+        std::shared_ptr<WayID> came_from_;
 
     };
 
