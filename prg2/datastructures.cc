@@ -467,14 +467,16 @@ std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_any(Coord
            
      }
      reverse(path.begin(), path.end());
+     if(path.size() == 1){
+         path.clear();
+
+     }
      return path;
 
 }
 
 bool Datastructures::remove_way(WayID id)
 {
-    // Replace this comment with your implementation
-    return false;
 }
 
 std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_least_crossroads(Coord fromxy, Coord toxy)
@@ -550,6 +552,10 @@ std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_least_cro
         first = prior;
     }
     reverse(path.begin(), path.end());
+    if(path.size() == 1){
+        path.clear();
+
+    }
     return path;
 }
 
@@ -638,8 +644,10 @@ std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_shortest_
         first = prior;
     }
     reverse(path.begin(), path.end());
+    if(path.size() == 1){
+        path.clear();
 
-
+    }
     return path;
 }
 
