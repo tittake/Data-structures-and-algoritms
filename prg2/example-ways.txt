@@ -7,3 +7,5 @@ add_way We (7,10) (3,8)
 add_way Wf (3,7) (3,8)
 add_way Wg (11,1) (13,3) (13,8) (7,10)
 add_way Wh (0,7) (3,10)
+
+route_any (0,0) (7,10)
